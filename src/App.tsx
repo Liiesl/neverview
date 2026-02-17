@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { ActivityBar } from './components/ActivityBar';
-import { Sidebar } from './components/Sidebar';
+import { Sidebar } from './components/sidebar';
 import { Editor } from './components/Editor';
 import { Preview } from './components/Preview';
 import { StatusBar } from './components/StatusBar';
