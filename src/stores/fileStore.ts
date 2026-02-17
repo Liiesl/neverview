@@ -153,7 +153,7 @@ const welcomeHTML = `<!DOCTYPE html>
 const welcomeCSS = `/* neverview — minimal developer aesthetic */
 
 :root {
-    --bg: #1e1e1e;
+    --bg: #181818;
     --bg-elevated: #252526;
     --bg-hover: #2a2d2e;
     --border: #3e3e42;

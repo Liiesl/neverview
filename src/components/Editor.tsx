@@ -1,6 +1,8 @@
 import { useRef, useEffect, useCallback } from 'react';
+import { shikiToMonaco } from '@shikijs/monaco'
 import Editor from '@monaco-editor/react';
 import type * as monaco from 'monaco-editor';
+import { createHighlighter } from 'shiki'
 import { Sparkles, Copy } from 'lucide-react';
 import './Editor.css';
 
@@ -27,6 +29,7 @@ export function EditorComponent({ value, language, fileId, onChange }: EditorPro
   const modelsRef = useRef<Map<string, monaco.editor.ITextModel>>(new Map());
   const currentFileIdRef = useRef<string>(fileId);
   const monacoRef = useRef<MonacoInstance | null>(null);
+  const highlighterRef = useRef<Awaited<ReturnType<typeof createHighlighter>> | null>(null);
 
   // Update ref when fileId changes
   useEffect(() => {
@@ -66,9 +69,27 @@ export function EditorComponent({ value, language, fileId, onChange }: EditorPro
     return model;
   }, [getMonaco]);
 
-  const handleEditorDidMount = useCallback((editor: monaco.editor.IStandaloneCodeEditor, monacoInstance: typeof monaco) => {
+  const handleEditorDidMount = useCallback(async (editor: monaco.editor.IStandaloneCodeEditor, monacoInstance: typeof monaco) => {
     editorRef.current = editor;
     monacoRef.current = monacoInstance as unknown as MonacoInstance;
+    
+    // Initialize Shiki highlighter
+    if (!highlighterRef.current) {
+      const highlighter = await createHighlighter({
+        themes: ['dark-plus'],
+        langs: ['html', 'css', 'javascript', 'json'],
+      });
+      highlighterRef.current = highlighter;
+      
+      // Register languages with Monaco
+      monacoInstance.languages.register({ id: 'html' });
+      monacoInstance.languages.register({ id: 'css' });
+      monacoInstance.languages.register({ id: 'javascript' });
+      monacoInstance.languages.register({ id: 'json' });
+      
+      // Integrate Shiki with Monaco
+      shikiToMonaco(highlighter, monacoInstance);
+    }
     
     // Set editor options
     editor.updateOptions({
@@ -81,7 +102,7 @@ export function EditorComponent({ value, language, fileId, onChange }: EditorPro
       automaticLayout: true,
       tabSize: 2,
       wordWrap: 'on',
-      theme: 'vs-dark',
+      theme: 'dark-plus',
     });
 
     // Create model for current file if it doesn't exist
@@ -149,7 +170,7 @@ export function EditorComponent({ value, language, fileId, onChange }: EditorPro
           defaultValue={value}
           onChange={handleChange}
           onMount={handleEditorDidMount}
-          theme="vs-dark"
+          theme="dark-plus"
           loading={
             <div className="editor-loading">
               <div className="loading-spinner" />
