@@ -121,22 +121,7 @@ export function EditorComponent({ value, language, fileId, onChange }: EditorPro
       
       editorRef.current.focus();
     }
-  }, [fileId, value, language, createOrUpdateModel, getMonaco]);
-
-  // Update model content when value changes externally
-  useEffect(() => {
-    if (!editorRef.current) return;
-
-    const monacoLib = getMonaco();
-    if (!monacoLib) return;
-
-    const uri = monacoLib.Uri.parse(`file://${fileId}`);
-    const model = monacoLib.editor.getModel(uri);
-    
-    if (model && model.getValue() !== value) {
-      model.setValue(value);
-    }
-  }, [value, fileId, getMonaco]);
+  }, [fileId, createOrUpdateModel, getMonaco]);
 
   // Handle editor changes
   const handleChange = useCallback((newValue: string | undefined) => {
@@ -160,7 +145,7 @@ export function EditorComponent({ value, language, fileId, onChange }: EditorPro
         <Editor
           height="100%"
           language={language}
-          value={value}
+          defaultValue={value}
           onChange={handleChange}
           onMount={handleEditorDidMount}
           theme="vs-dark"

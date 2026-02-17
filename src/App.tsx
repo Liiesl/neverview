@@ -140,7 +140,6 @@ function App() {
             >
               {activeFile ? (
                 <Editor 
-                  key={activeFile.id}
                   value={activeFile.content || ''}
                   language={activeFile.language || 'plaintext'}
                   fileId={activeFile.id}
