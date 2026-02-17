@@ -46,56 +46,458 @@ const getLanguageFromExtension = (filename: string): Language => {
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
-const defaultHTML = `<!DOCTYPE html>
+const welcomeHTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preview</title>
-    <style>
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            line-height: 1.6;
-        }
-        h1 { color: #333; }
-        .card {
-            background: #f5f5f5;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-        }
-    </style>
+    <title>neverview</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Hello World!</h1>
-    <div class="card">
-        <p>Edit the HTML code on the left to see changes here.</p>
+    <div class="app">
+        <nav class="nav">
+            <div class="nav-brand">neverview</div>
+            <div class="nav-status">
+                <span class="status-dot"></span>
+                <span class="status-text">ready</span>
+            </div>
+        </nav>
+
+        <main class="main">
+            <header class="hero">
+                <h1 class="hero-title">
+                    <span class="prompt">$</span>
+                    <span class="command">hello</span>
+                    <span class="cursor">|</span>
+                </h1>
+                <p class="hero-subtitle">A minimal environment for HTML, CSS, and JavaScript.</p>
+            </header>
+
+            <section class="workflow">
+                <div class="workflow-item">
+                    <div class="workflow-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </div>
+                    <div class="workflow-content">
+                        <h3>Create</h3>
+                        <p>Right-click in the file explorer to add new files and folders.</p>
+                    </div>
+                </div>
+
+                <div class="workflow-item">
+                    <div class="workflow-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                    </div>
+                    <div class="workflow-content">
+                        <h3>Edit</h3>
+                        <p>Open files in the editor. Changes are tracked automatically.</p>
+                    </div>
+                </div>
+
+                <div class="workflow-item">
+                    <div class="workflow-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="9" y1="3" x2="9" y2="21"/>
+                        </svg>
+                    </div>
+                    <div class="workflow-content">
+                        <h3>Preview</h3>
+                        <p>See your work in real-time. Drag the handle to resize panels.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="info">
+                <div class="info-section">
+                    <h4>Features</h4>
+                    <ul class="info-list">
+                        <li>Virtual file system with folder support</li>
+                        <li>Live preview with dependency resolution</li>
+                        <li>Multi-tab editor interface</li>
+                        <li>In-memory storage (no persistence)</li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h4>Tips</h4>
+                    <ul class="info-list">
+                        <li>Use relative paths: <code>href="style.css"</code></li>
+                        <li>Unsaved changes show a dot indicator</li>
+                        <li>Preview follows the active HTML file</li>
+                        <li>Drag the splitter to adjust layout</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <span class="footer-item">neverview v1.0</span>
+            <span class="footer-divider">·</span>
+            <span class="footer-item">start editing to begin</span>
+        </footer>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>`;
 
-const defaultCSS = `/* Add your CSS styles here */
+const welcomeCSS = `/* neverview — minimal developer aesthetic */
+
+:root {
+    --bg: #1e1e1e;
+    --bg-elevated: #252526;
+    --bg-hover: #2a2d2e;
+    --border: #3e3e42;
+    --text: #d4d4d4;
+    --text-muted: #858585;
+    --accent: #569cd6;
+    --accent-glow: rgba(86, 156, 214, 0.15);
+    --success: #4ec9b0;
+    --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+}
 
 body {
-  margin: 0;
-  padding: 0;
+    font-family: var(--font-ui);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Layout */
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* Navigation */
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.nav-brand {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -0.01em;
+}
+
+.nav-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--success);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--success);
+}
+
+/* Main Content */
+.main {
+    flex: 1;
+    padding: 64px 0;
+}
+
+/* Hero */
+.hero {
+    margin-bottom: 64px;
+}
+
+.hero-title {
+    font-family: var(--font-mono);
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 400;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.prompt {
+    color: var(--text-muted);
+    user-select: none;
+}
+
+.command {
+    color: var(--accent);
+}
+
+.cursor {
+    color: var(--accent);
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+.hero-subtitle {
+    font-size: 16px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    max-width: 480px;
+}
+
+/* Workflow */
+.workflow {
+    margin-bottom: 64px;
+}
+
+.workflow-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+    transition: all 0.2s ease;
+}
+
+.workflow-item:hover {
+    padding-left: 8px;
+}
+
+.workflow-item:last-child {
+    border-bottom: none;
+}
+
+.workflow-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: color 0.2s ease;
+}
+
+.workflow-item:hover .workflow-icon {
+    color: var(--accent);
+}
+
+.workflow-icon svg {
+    stroke-width: 1.5;
+}
+
+.workflow-content h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+}
+
+.workflow-content p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* Info Sections */
+.info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 48px;
+}
+
+.info-section h4 {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+.info-list {
+    list-style: none;
+}
+
+.info-list li {
+    font-size: 14px;
+    color: var(--text);
+    padding: 8px 0;
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.5;
+}
+
+.info-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 16px;
+    width: 4px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+    opacity: 0.6;
+}
+
+.info-list li code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    background: var(--bg-elevated);
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: var(--accent);
+}
+
+/* Footer */
+.footer {
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.footer-divider {
+    opacity: 0.4;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .app {
+        padding: 0 20px;
+    }
+    
+    .main {
+        padding: 48px 0;
+    }
+    
+    .hero {
+        margin-bottom: 48px;
+    }
+    
+    .workflow {
+        margin-bottom: 48px;
+    }
+    
+    .info {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
 }`;
 
-const defaultJS = `// Add your JavaScript code here
+const welcomeJS = `// neverview — minimal developer environment
 
-console.log('Hello from NeverView!');`;
+console.log('%cneverview', 'font-family: monospace; font-size: 14px; color: #569cd6;');
+console.log('%cv1.0.0 — system ready', 'font-family: monospace; font-size: 11px; color: #858585;');
+console.log('');
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Subtle fade-in for workflow items
+    const items = document.querySelectorAll('.workflow-item');
+    items.forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(8px)';
+        item.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        
+        setTimeout(() => {
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+        }, 100 + (index * 80));
+    });
+    
+    // Info sections stagger
+    const infoSections = document.querySelectorAll('.info-section');
+    infoSections.forEach((section, index) => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(12px)';
+        section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        
+        setTimeout(() => {
+            section.style.opacity = '1';
+            section.style.transform = 'translateY(0)';
+        }, 400 + (index * 100));
+    });
+    
+    // Command typing effect
+    const command = document.querySelector('.command');
+    if (command) {
+        const text = command.textContent;
+        const chars = 'abcdefghijklmnopqrstuvwxyz';
+        let iteration = 0;
+        
+        const interval = setInterval(() => {
+            command.textContent = text
+                .split('')
+                .map((char, index) => {
+                    if (index < iteration) {
+                        return text[index];
+                    }
+                    return chars[Math.floor(Math.random() * chars.length)];
+                })
+                .join('');
+            
+            if (iteration >= text.length) {
+                clearInterval(interval);
+            }
+            
+            iteration += 1/2;
+        }, 40);
+    }
+});
+
+// Export for module systems
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { 
+        name: 'neverview',
+        version: '1.0.0',
+        status: 'ready'
+    };
+}`;
 
 const getDefaultContent = (language: Language): string => {
   switch (language) {
     case 'html':
-      return defaultHTML;
+      return welcomeHTML;
     case 'css':
-      return defaultCSS;
+      return welcomeCSS;
     case 'javascript':
-      return defaultJS;
+      return welcomeJS;
     default:
       return '';
   }
@@ -106,6 +508,8 @@ export const useFileStore = () => {
   const [rootFolder, setRootFolder] = useState<VirtualNode>(() => {
     const rootId = generateId();
     const indexHtmlId = generateId();
+    const styleCssId = generateId();
+    const scriptJsId = generateId();
     
     return {
       id: rootId,
@@ -119,8 +523,30 @@ export const useFileStore = () => {
           name: 'index.html',
           type: 'file',
           path: '/NEVERVIEW/index.html',
-          content: defaultHTML,
+          content: welcomeHTML,
           language: 'html',
+          isDirty: false,
+          isOpen: true,
+          parentId: rootId,
+        }],
+        [styleCssId, {
+          id: styleCssId,
+          name: 'style.css',
+          type: 'file',
+          path: '/NEVERVIEW/style.css',
+          content: welcomeCSS,
+          language: 'css',
+          isDirty: false,
+          isOpen: true,
+          parentId: rootId,
+        }],
+        [scriptJsId, {
+          id: scriptJsId,
+          name: 'script.js',
+          type: 'file',
+          path: '/NEVERVIEW/script.js',
+          content: welcomeJS,
+          language: 'javascript',
           isDirty: false,
           isOpen: true,
           parentId: rootId,
@@ -139,7 +565,13 @@ export const useFileStore = () => {
   const [openFiles, setOpenFiles] = useState<string[]>(() => {
     const entries = Array.from(rootFolder.children?.entries() || []);
     const indexHtml = entries.find(([, node]) => node.name === 'index.html');
-    return indexHtml ? [indexHtml[0]] : [];
+    const styleCss = entries.find(([, node]) => node.name === 'style.css');
+    const scriptJs = entries.find(([, node]) => node.name === 'script.js');
+    const files: string[] = [];
+    if (indexHtml) files.push(indexHtml[0]);
+    if (styleCss) files.push(styleCss[0]);
+    if (scriptJs) files.push(scriptJs[0]);
+    return files;
   });
 
   // Flatten all files for easier access
