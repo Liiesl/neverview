@@ -4,51 +4,50 @@ import { Sidebar } from './components/Sidebar';
 import { Editor } from './components/Editor';
 import { Preview } from './components/Preview';
 import { StatusBar } from './components/StatusBar';
+import { useFileStore } from './stores/fileStore';
 import './App.css';
 
-const defaultHTML = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preview</title>
-    <style>
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            line-height: 1.6;
-        }
-        h1 { color: #333; }
-        .card {
-            background: #f5f5f5;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-        }
-    </style>
-</head>
-<body>
-    <h1>Hello World!</h1>
-    <div class="card">
-        <p>Edit the HTML code on the left to see changes here.</p>
-    </div>
-</body>
-</html>`;
-
 function App() {
-  const [htmlContent, setHtmlContent] = useState(defaultHTML);
+  const {
+    rootFolder,
+    activeFile,
+    activeFileId,
+    tabs,
+    updateFileContent,
+    openFile,
+    closeFile,
+    setActiveFile,
+    createFile,
+    deleteFile,
+    renameFile,
+    toggleFolder,
+    getPreviewContent,
+  } = useFileStore();
+
   const [activeTab, setActiveTab] = useState<'files' | 'search' | 'git' | 'extensions'>('files');
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [splitRatio, setSplitRatio] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
 
   const handleHTMLChange = useCallback((value: string | undefined) => {
-    if (value !== undefined) {
-      setHtmlContent(value);
+    if (value !== undefined && activeFileId) {
+      updateFileContent(activeFileId, value);
     }
-  }, []);
+  }, [activeFileId, updateFileContent]);
+
+  const handleFileSelect = useCallback((fileId: string) => {
+    openFile(fileId);
+    setActiveFile(fileId);
+  }, [openFile, setActiveFile]);
+
+  const handleTabClick = useCallback((fileId: string) => {
+    setActiveFile(fileId);
+  }, [setActiveFile]);
+
+  const handleTabClose = useCallback((e: React.MouseEvent, fileId: string) => {
+    e.stopPropagation();
+    closeFile(fileId);
+  }, [closeFile]);
 
   const handleSplitDrag = useCallback((e: React.MouseEvent) => {
     if (!isDragging) return;
@@ -73,6 +72,9 @@ function App() {
     setIsDragging(false);
   }, []);
 
+  // Get preview content from active HTML file
+  const previewContent = getPreviewContent();
+
   return (
     <div 
       className="app"
@@ -89,16 +91,44 @@ function App() {
         />
         
         {sidebarVisible && (
-          <Sidebar activeTab={activeTab} />
+          <Sidebar 
+            activeTab={activeTab}
+            rootFolder={rootFolder}
+            activeFileId={activeFileId}
+            onFileSelect={handleFileSelect}
+            onToggleFolder={toggleFolder}
+            onCreateFile={createFile}
+            onDeleteFile={deleteFile}
+            onRenameFile={renameFile}
+          />
         )}
         
         <div className="main-content">
+          {/* Tab Bar */}
           <div className="tab-bar">
-            <div className="tab active">
-              <span className="tab-icon">📄</span>
-              <span>index.html</span>
-              <button className="tab-close">×</button>
-            </div>
+            {tabs.map((tab) => (
+              <div 
+                key={tab.id}
+                className={`tab ${tab.id === activeFileId ? 'active' : ''}`}
+                onClick={() => handleTabClick(tab.id)}
+              >
+                <span className="tab-icon">
+                  {tab.language === 'html' && '📄'}
+                  {tab.language === 'css' && '🎨'}
+                  {tab.language === 'javascript' && '⚡'}
+                  {tab.language === 'typescript' && '📘'}
+                  {!['html', 'css', 'javascript', 'typescript'].includes(tab.language) && '📄'}
+                </span>
+                <span className={tab.isDirty ? 'tab-dirty' : ''}>{tab.name}</span>
+                {tab.isDirty && <span className="tab-dirty-indicator">●</span>}
+                <button 
+                  className="tab-close"
+                  onClick={(e) => handleTabClose(e, tab.id)}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
           </div>
           
           <div id="editor-container" className="editor-container">
@@ -106,10 +136,19 @@ function App() {
               className="editor-panel"
               style={{ height: `${splitRatio}%` }}
             >
-              <Editor 
-                value={htmlContent}
-                onChange={handleHTMLChange}
-              />
+              {activeFile ? (
+                <Editor 
+                  key={activeFile.id}
+                  value={activeFile.content || ''}
+                  language={activeFile.language || 'plaintext'}
+                  fileId={activeFile.id}
+                  onChange={handleHTMLChange}
+                />
+              ) : (
+                <div className="no-editor">
+                  <p>Select a file to start editing</p>
+                </div>
+              )}
             </div>
             
             <div 
@@ -123,7 +162,7 @@ function App() {
               className="preview-panel"
               style={{ height: `${100 - splitRatio}%` }}
             >
-              <Preview htmlContent={htmlContent} />
+              <Preview htmlContent={previewContent} />
             </div>
           </div>
         </div>

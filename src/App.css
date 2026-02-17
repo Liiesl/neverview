@@ -30,6 +30,21 @@
   height: 35px;
   overflow-x: auto;
   overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--vscode-border) transparent;
+}
+
+.tab-bar::-webkit-scrollbar {
+  height: 4px;
+}
+
+.tab-bar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tab-bar::-webkit-scrollbar-thumb {
+  background-color: var(--vscode-border);
+  border-radius: 2px;
 }
 
 .tab {
@@ -38,22 +53,38 @@
   gap: 6px;
   padding: 0 12px;
   height: 35px;
-  background-color: var(--vscode-tab-active-bg);
-  color: var(--vscode-tab-active-text);
+  background-color: var(--vscode-tab-inactive-bg);
+  color: var(--vscode-tab-inactive-text);
   font-size: 13px;
   cursor: pointer;
   border-right: 1px solid var(--vscode-border);
   white-space: nowrap;
   user-select: none;
+  transition: background-color 0.2s;
+}
+
+.tab:hover {
+  background-color: var(--vscode-tab-hover-bg);
 }
 
 .tab.active {
   background-color: var(--vscode-tab-active-bg);
+  color: var(--vscode-tab-active-text);
   border-bottom: 1px solid var(--vscode-accent);
 }
 
 .tab-icon {
   font-size: 14px;
+}
+
+.tab-dirty {
+  font-style: italic;
+}
+
+.tab-dirty-indicator {
+  color: var(--vscode-accent);
+  font-size: 10px;
+  margin-left: 2px;
 }
 
 .tab-close {
@@ -70,11 +101,31 @@
   border-radius: 3px;
   padding: 0;
   margin-left: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.tab:hover .tab-close {
+  opacity: 1;
 }
 
 .tab-close:hover {
   background-color: rgba(255, 255, 255, 0.1);
   color: var(--vscode-text);
+}
+
+.tab.active .tab-close {
+  opacity: 1;
+}
+
+/* No Editor State */
+.no-editor {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--vscode-text-muted);
+  font-size: 14px;
 }
 
 /* Editor Container */

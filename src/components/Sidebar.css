@@ -24,11 +24,170 @@
   justify-content: space-between;
 }
 
+.sidebar-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.sidebar-action-btn {
+  background: none;
+  border: none;
+  color: var(--vscode-text-muted);
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-action-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--vscode-text);
+}
+
 /* File Tree Styles */
 .file-tree {
   padding: 0 0 8px 0;
 }
 
+.tree-node {
+  display: flex;
+  align-items: center;
+  padding: 4px 12px 4px 8px;
+  cursor: pointer;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--vscode-text);
+  user-select: none;
+}
+
+.tree-node:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.tree-node.active {
+  background-color: var(--vscode-selection);
+}
+
+.tree-node.creating {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.tree-chevron {
+  display: flex;
+  align-items: center;
+  color: var(--vscode-text-muted);
+}
+
+.tree-folder-icon {
+  color: #dcb67a;
+}
+
+.tree-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tree-children {
+  /* Children are indented via inline styles */
+}
+
+/* File Icons */
+.file-icon {
+  flex-shrink: 0;
+}
+
+.file-icon.html {
+  color: #e44d26;
+}
+
+.file-icon.css {
+  color: #264de4;
+}
+
+.file-icon.js,
+.file-icon.jsx {
+  color: #f7df1e;
+}
+
+.file-icon.ts,
+.file-icon.tsx {
+  color: #3178c6;
+}
+
+.file-icon.json {
+  color: #ccc;
+}
+
+/* Rename Input */
+.rename-input,
+.create-input {
+  flex: 1;
+  background-color: var(--vscode-bg);
+  border: 1px solid var(--vscode-accent);
+  color: var(--vscode-text);
+  padding: 2px 4px;
+  font-size: 13px;
+  outline: none;
+  border-radius: 2px;
+}
+
+/* Context Menu */
+.context-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+}
+
+.context-menu {
+  background-color: var(--vscode-dropdown-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  padding: 4px 0;
+  min-width: 160px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+
+.context-menu button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 12px;
+  background: none;
+  border: none;
+  color: var(--vscode-text);
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.context-menu button:hover {
+  background-color: var(--vscode-selection);
+}
+
+.context-menu button.danger {
+  color: #f48771;
+}
+
+.context-menu button.danger:hover {
+  background-color: rgba(244, 135, 113, 0.2);
+}
+
+.context-menu-divider {
+  height: 1px;
+  background-color: var(--vscode-border);
+  margin: 4px 0;
+}
+
+/* Old styles for backward compatibility - remove when fully migrated */
 .folder-item,
 .file-item {
   user-select: none;
@@ -76,10 +235,6 @@
 
 .file-indent {
   width: 16px;
-}
-
-.file-icon.html {
-  color: #e37933;
 }
 
 /* Outline Styles */
