@@ -1,0 +1,133 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--vscode-bg);
+  overflow: hidden;
+}
+
+.content-area {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Tab Bar */
+.tab-bar {
+  display: flex;
+  background-color: var(--vscode-tab-inactive-bg);
+  border-bottom: 1px solid var(--vscode-border);
+  height: 35px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  height: 35px;
+  background-color: var(--vscode-tab-active-bg);
+  color: var(--vscode-tab-active-text);
+  font-size: 13px;
+  cursor: pointer;
+  border-right: 1px solid var(--vscode-border);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.tab.active {
+  background-color: var(--vscode-tab-active-bg);
+  border-bottom: 1px solid var(--vscode-accent);
+}
+
+.tab-icon {
+  font-size: 14px;
+}
+
+.tab-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: none;
+  border: none;
+  color: var(--vscode-text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 3px;
+  padding: 0;
+  margin-left: 4px;
+}
+
+.tab-close:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--vscode-text);
+}
+
+/* Editor Container */
+.editor-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.editor-panel {
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-panel {
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Splitter */
+.splitter {
+  height: 8px;
+  background-color: var(--vscode-bg);
+  cursor: row-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.2s;
+}
+
+.splitter:hover {
+  background-color: var(--vscode-accent);
+}
+
+.splitter-handle {
+  width: 40px;
+  height: 2px;
+  background-color: var(--vscode-border);
+  border-radius: 1px;
+}
+
+.splitter:hover .splitter-handle {
+  background-color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+}

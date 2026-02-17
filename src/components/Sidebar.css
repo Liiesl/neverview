@@ -1,0 +1,183 @@
+.sidebar {
+  width: 250px;
+  background-color: var(--vscode-sidebar-bg);
+  border-right: 1px solid var(--vscode-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.sidebar-section {
+  flex: 1;
+  overflow: auto;
+}
+
+.sidebar-header {
+  padding: 10px 20px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--vscode-text-muted);
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* File Tree Styles */
+.file-tree {
+  padding: 0 0 8px 0;
+}
+
+.folder-item,
+.file-item {
+  user-select: none;
+}
+
+.folder-header {
+  display: flex;
+  align-items: center;
+  padding: 4px 12px 4px 8px;
+  cursor: pointer;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--vscode-text);
+}
+
+.folder-header:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.folder-icon {
+  color: #dcb67a;
+}
+
+.folder-children {
+  padding-left: 8px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  padding: 4px 12px 4px 8px;
+  cursor: pointer;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--vscode-text);
+}
+
+.file-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.file-item.active {
+  background-color: var(--vscode-selection);
+}
+
+.file-indent {
+  width: 16px;
+}
+
+.file-icon.html {
+  color: #e37933;
+}
+
+/* Outline Styles */
+.outline-content {
+  padding: 8px 20px;
+}
+
+.outline-item {
+  display: flex;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 13px;
+  color: var(--vscode-text);
+  cursor: pointer;
+}
+
+.outline-item:hover {
+  color: var(--vscode-tab-active-text);
+}
+
+.outline-item.indented {
+  padding-left: 16px;
+}
+
+.outline-tag {
+  color: #569cd6;
+}
+
+/* Search Styles */
+.search-content {
+  padding: 12px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.search-input {
+  background-color: var(--vscode-bg);
+  border: 1px solid var(--vscode-border);
+  color: var(--vscode-text);
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 2px;
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: var(--vscode-accent);
+}
+
+/* Git Styles */
+.git-content {
+  padding: 20px;
+}
+
+.git-message {
+  color: var(--vscode-text-muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Extensions Styles */
+.extensions-content {
+  padding: 12px 20px;
+}
+
+.extensions-list {
+  margin-top: 12px;
+}
+
+.extension-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.extension-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.extension-icon {
+  font-size: 24px;
+}
+
+.extension-info {
+  flex: 1;
+}
+
+.extension-name {
+  font-size: 13px;
+  color: var(--vscode-text);
+}
+
+.extension-desc {
+  font-size: 11px;
+  color: var(--vscode-text-muted);
+}

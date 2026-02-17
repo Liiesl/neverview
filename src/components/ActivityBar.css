@@ -1,0 +1,56 @@
+.activity-bar {
+  width: 48px;
+  background-color: var(--vscode-activity-bar-bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid var(--vscode-border);
+  flex-shrink: 0;
+}
+
+.activity-bar-top {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  gap: 4px;
+}
+
+.activity-bar-bottom {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  gap: 4px;
+  border-top: 1px solid var(--vscode-border);
+}
+
+.activity-bar-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: none;
+  border: none;
+  color: var(--vscode-text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.activity-bar-item:hover {
+  color: var(--vscode-text);
+}
+
+.activity-bar-item.active {
+  color: var(--vscode-text);
+}
+
+.active-indicator {
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background-color: var(--vscode-text);
+  border-radius: 0 2px 2px 0;
+}
