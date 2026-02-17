@@ -33,7 +33,7 @@ export function FileTreeNode({
   const nodeRef = useRef<HTMLDivElement>(null);
   const isActive = node.id === activeFileId;
   const isFocused = node.id === focusedNodeId;
-  const indent = level * 12;
+  const indent = level * 17; // 16px for icon + 1px for spacing
 
   useEffect(() => {
     if (isCreatingHere && inputRef.current) {
