@@ -18,6 +18,7 @@ export function Sidebar({
   onMoveFile,
   sidebarWidth,
   onResize,
+  allFiles,
 }: SidebarProps) {
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [rootContextMenu, setRootContextMenu] = useState<RootContextMenuState | null>(null);
@@ -234,6 +235,7 @@ export function Sidebar({
             onMoveFile={onMoveFile}
             onHeaderNewFile={handleHeaderNewFile}
             onHeaderNewFolder={handleHeaderNewFolder}
+            allFiles={allFiles}
           />
         );
 

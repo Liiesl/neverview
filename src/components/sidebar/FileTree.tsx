@@ -26,6 +26,7 @@ export function FileTree({
   onMoveFile,
   onHeaderNewFile,
   onHeaderNewFolder,
+  allFiles,
 }: FileTreeComponentProps) {
   const fileTreeRef = useRef<HTMLDivElement>(null);
 
@@ -77,6 +78,7 @@ export function FileTree({
           onFinishCreating={onFinishCreating}
           onFocusNode={onFocusNode}
           onMoveFile={onMoveFile}
+          allFiles={allFiles}
         />
       </div>
     </div>

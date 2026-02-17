@@ -96,7 +96,7 @@ function App() {
         />
         
         {sidebarVisible && (
-          <Sidebar 
+          <Sidebar
             activeTab={activeTab}
             rootFolder={rootFolder}
             activeFileId={activeFileId}
@@ -108,6 +108,7 @@ function App() {
             onMoveFile={moveFile}
             sidebarWidth={sidebarWidth}
             onResize={setSidebarWidth}
+            allFiles={allFiles}
           />
         )}
         <style>{`

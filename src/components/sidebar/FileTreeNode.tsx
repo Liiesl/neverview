@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { ChevronDown, ChevronRight, Folder, FolderOpen, File } from 'lucide-react';
 import { FileIcon } from './FileIcon';
-import { sortChildren } from './utils';
 import type { FileTreeNodeProps, DropPosition } from './types';
 import type { VirtualNode } from '../../stores/fileStore';
 import './Sidebar.css';
@@ -22,6 +21,7 @@ export function FileTreeNode({
   onFinishCreating,
   onFocusNode,
   onMoveFile,
+  allFiles,
 }: FileTreeNodeProps) {
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState(node.name);
@@ -33,7 +33,7 @@ export function FileTreeNode({
   const nodeRef = useRef<HTMLDivElement>(null);
   const isActive = node.id === activeFileId;
   const isFocused = node.id === focusedNodeId;
-  const indent = level * 17; // 16px for icon + 1px for spacing
+  const indent = level * 18; // 16px for icon + 1px for spacing
 
   useEffect(() => {
     if (isCreatingHere && inputRef.current) {
@@ -151,13 +151,42 @@ export function FileTreeNode({
     const draggedId = e.dataTransfer.getData('fileId');
     if (!draggedId || draggedId === node.id) return;
 
-    if (node.type === 'folder' && currentDropPosition === 'inside') {
-      if (!checkCircular(node, draggedId)) {
+    if (currentDropPosition === 'inside') {
+      // Dropping into a folder
+      if (node.type === 'folder' && !checkCircular(node, draggedId)) {
         onMoveFile(draggedId, node.id);
         if (!node.isExpanded) {
           onToggleFolder(node.id);
         }
       }
+    } else if (currentDropPosition === 'before' || currentDropPosition === 'after') {
+      // Reordering: dropping before or after a node
+      // Find the parent of the target node
+      const targetParentId = node.parentId;
+      if (!targetParentId || !allFiles) return; // Cannot reorder at root level or without allFiles
+
+      // Get the target's siblings to calculate index
+      const targetParent = allFiles.get(targetParentId);
+      const targetSiblings = targetParent?.children ? 
+        Array.from(targetParent.children.values()) : [];
+
+      // Find the index of the target node in its parent's children
+      const targetIndex = targetSiblings.findIndex((sibling: VirtualNode) => sibling.id === node.id);
+      if (targetIndex === -1) return;
+
+      // Calculate the insert index based on drop position
+      let insertIndex = currentDropPosition === 'before' ? targetIndex : targetIndex + 1;
+
+      // If moving within the same parent, adjust for the item being removed
+      const draggedNode = allFiles.get(draggedId);
+      if (draggedNode && draggedNode.parentId === targetParentId) {
+        const draggedIndex = targetSiblings.findIndex((sibling: VirtualNode) => sibling.id === draggedId);
+        if (draggedIndex !== -1 && draggedIndex < targetIndex) {
+          insertIndex--;
+        }
+      }
+
+      onMoveFile(draggedId, targetParentId, insertIndex);
     }
   };
 
@@ -277,7 +306,7 @@ export function FileTreeNode({
             </div>
           )}
 
-          {node.children && sortChildren(Array.from(node.children.values())).map((child) => (
+          {node.children && Array.from(node.children.values()).map((child) => (
             <FileTreeNode
               key={child.id}
               node={child}
@@ -295,6 +324,7 @@ export function FileTreeNode({
               onFinishCreating={onFinishCreating}
               onFocusNode={onFocusNode}
               onMoveFile={onMoveFile}
+              allFiles={allFiles}
             />
           ))}
         </div>

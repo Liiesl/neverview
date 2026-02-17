@@ -867,26 +867,42 @@ export const useFileStore = () => {
     return htmlFiles['/NEVERVIEW/index.html'] || Object.values(htmlFiles)[0] || '';
   }, [activeFile, getAllHtmlContent]);
 
-  const moveFile = useCallback((fileId: string, targetFolderId: string) => {
+  const moveFile = useCallback((fileId: string, targetFolderId: string, targetIndex?: number) => {
+    // Helper function to deep clone a VirtualNode with proper Map handling
+    const cloneNode = (node: VirtualNode): VirtualNode => {
+      const cloned: VirtualNode = { ...node };
+      if (node.children) {
+        cloned.children = new Map();
+        for (const [key, child] of node.children) {
+          cloned.children.set(key, cloneNode(child));
+        }
+      }
+      return cloned;
+    };
+
     const fileToMove = allFiles.get(fileId);
     const targetFolder = allFiles.get(targetFolderId);
-    
+
     if (!fileToMove || !targetFolder) return;
-    if (fileToMove.parentId === targetFolderId) return; // Already in target
     if (targetFolder.type !== 'folder') return;
 
+    // If same parent and no targetIndex specified, do nothing
+    if (fileToMove.parentId === targetFolderId && targetIndex === undefined) return;
+
     setRootFolder(prev => {
-      const newRoot = { ...prev };
+      // Deep clone the entire tree
+      const newRoot = cloneNode(prev);
       let movedNode: VirtualNode | undefined;
-      
+      let sourceParentId: string | null = null;
+
       // Remove from current parent
       const removeFromParent = (node: VirtualNode): boolean => {
         if (node.children) {
           if (node.children.has(fileId)) {
             const nodeToMove = node.children.get(fileId);
             if (nodeToMove) {
-              // Deep copy the node
-              movedNode = JSON.parse(JSON.stringify(nodeToMove)) as VirtualNode;
+              movedNode = nodeToMove;
+              sourceParentId = node.id;
               node.children.delete(fileId);
             }
             return true;
@@ -897,45 +913,64 @@ export const useFileStore = () => {
         }
         return false;
       };
-      
+
       removeFromParent(newRoot);
-      
+
       if (movedNode) {
-        // Create updated node with new parent
+        // Create updated node with new parent and cloned children
         const updatedNode: VirtualNode = {
-          id: movedNode.id,
-          name: movedNode.name,
-          type: movedNode.type,
+          ...movedNode,
           path: `${targetFolder.path}/${movedNode.name}`,
-          content: movedNode.content,
-          language: movedNode.language,
-          isDirty: movedNode.isDirty,
-          isOpen: movedNode.isOpen,
-          isExpanded: movedNode.isExpanded,
-          children: movedNode.children,
           parentId: targetFolderId
         };
-        
-        // Add to new parent
-        const addToParent = (node: VirtualNode): boolean => {
+
+        // Add to target parent at specified index
+        const addToParentAtIndex = (node: VirtualNode): boolean => {
           if (node.id === targetFolderId) {
             if (!node.children) {
               node.children = new Map();
             }
-            node.children.set(fileId, updatedNode);
+
+            // If targetIndex is specified, we need to reorder
+            if (targetIndex !== undefined) {
+              // Convert Map to array to manipulate order
+              const childrenArray = Array.from(node.children.entries());
+
+              // Calculate insert index
+              let insertIndex = targetIndex;
+              if (sourceParentId === targetFolderId) {
+                // Moving within same parent - need to adjust for the removed item
+                const oldIndex = childrenArray.findIndex(([id]) => id === fileId);
+                if (oldIndex !== -1 && oldIndex < insertIndex) {
+                  insertIndex--;
+                }
+              }
+
+              // Clamp index to valid range
+              insertIndex = Math.max(0, Math.min(insertIndex, childrenArray.length));
+
+              // Insert at specified position
+              childrenArray.splice(insertIndex, 0, [fileId, updatedNode]);
+
+              // Convert back to Map
+              node.children = new Map(childrenArray);
+            } else {
+              // Just append to end
+              node.children.set(fileId, updatedNode);
+            }
             return true;
           }
           if (node.children) {
             for (const [, child] of node.children) {
-              if (addToParent(child)) return true;
+              if (addToParentAtIndex(child)) return true;
             }
           }
           return false;
         };
-        
-        addToParent(newRoot);
+
+        addToParentAtIndex(newRoot);
       }
-      
+
       return newRoot;
     });
   }, [allFiles]);

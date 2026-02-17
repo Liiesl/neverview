@@ -12,6 +12,7 @@ export interface SidebarProps {
   onMoveFile?: (fileId: string, targetFolderId: string, targetIndex?: number) => void;
   sidebarWidth: number;
   onResize: (width: number) => void;
+  allFiles?: Map<string, VirtualNode>;
 }
 
 export interface FileTreeNodeProps {
@@ -30,6 +31,7 @@ export interface FileTreeNodeProps {
   onFinishCreating: () => void;
   onFocusNode: (nodeId: string) => void;
   onMoveFile?: (fileId: string, targetFolderId: string, targetIndex?: number) => void;
+  allFiles?: Map<string, VirtualNode>;
 }
 
 export interface ContextMenuProps {
@@ -83,4 +85,5 @@ export interface FileTreeProps {
   onMoveFile?: (fileId: string, targetFolderId: string, targetIndex?: number) => void;
   onHeaderNewFile: () => void;
   onHeaderNewFolder: () => void;
+  allFiles?: Map<string, VirtualNode>;
 }
