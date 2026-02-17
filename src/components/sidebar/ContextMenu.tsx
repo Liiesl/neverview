@@ -6,7 +6,6 @@ import './Sidebar.css';
 export function ContextMenu({
   x,
   y,
-  nodeId: _nodeId,
   nodeType,
   onClose,
   onNewFile,

@@ -1,4 +1,5 @@
 import { useRef, useEffect, useCallback } from 'react';
+import { RefreshCw, ExternalLink } from 'lucide-react';
 import { processHtmlForPreview } from '../utils/previewEngine';
 import type { VirtualNode } from '../stores/fileStore';
 import './Preview.css';
@@ -67,14 +68,14 @@ export function Preview({ htmlContent, htmlPath, allFiles }: PreviewProps) {
             onClick={handleRefresh}
             title="Refresh Preview"
           >
-            🔄
+            <RefreshCw size={14} />
           </button>
           <button 
             className="preview-action-btn" 
             onClick={handleOpenInNewTab}
             title="Open in New Tab"
           >
-            ↗️
+            <ExternalLink size={14} />
           </button>
         </div>
       </div>

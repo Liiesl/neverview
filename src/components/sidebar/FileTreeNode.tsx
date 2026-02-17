@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { ChevronDown, ChevronRight, Folder, FolderOpen, File } from 'lucide-react';
 import { FileIcon } from './FileIcon';
 import { sortChildren } from './utils';
@@ -58,10 +58,10 @@ export function FileTreeNode({
     }
   };
 
-  const handleRename = () => {
+  const handleRename = useCallback(() => {
     setIsRenaming(true);
     setRenameValue(node.name);
-  };
+  }, [node.name]);
 
   const handleRenameSubmit = () => {
     if (renameValue && renameValue !== node.name) {
@@ -161,7 +161,7 @@ export function FileTreeNode({
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (isFocused && !isRenaming && !isCreatingHere) {
       switch (e.key) {
         case 'F2':
@@ -176,17 +176,17 @@ export function FileTreeNode({
           break;
       }
     }
-  };
+  }, [isFocused, isRenaming, isCreatingHere, node.name, node.id, onDeleteFile, handleRename]);
 
   useEffect(() => {
     const nodeElement = nodeRef.current;
     if (nodeElement) {
-      nodeElement.addEventListener('keydown', handleKeyDown as any);
+      nodeElement.addEventListener('keydown', handleKeyDown);
       return () => {
-        nodeElement.removeEventListener('keydown', handleKeyDown as any);
+        nodeElement.removeEventListener('keydown', handleKeyDown);
       };
     }
-  }, [isFocused, isRenaming, isCreatingHere, node.name, node.id]);
+  }, [handleKeyDown]);
 
   const getDropClass = () => {
     if (!isDragOver || !dropPosition) return '';

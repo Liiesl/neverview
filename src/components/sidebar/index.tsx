@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { FileType, FolderPlus } from 'lucide-react';
+import { FileType, FolderPlus, Puzzle } from 'lucide-react';
 import { FileTree } from './FileTree';
 import { ContextMenu } from './ContextMenu';
 import { collectVisibleNodes, findParentNode } from './utils';
@@ -286,7 +286,7 @@ export function Sidebar({
               />
               <div className="extensions-list">
                 <div className="extension-item">
-                  <div className="extension-icon">🔧</div>
+                  <div className="extension-icon"><Puzzle size={16} /></div>
                   <div className="extension-info">
                     <div className="extension-name">HTML Preview</div>
                     <div className="extension-desc">Built-in</div>

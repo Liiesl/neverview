@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { X, Circle, FileCode } from 'lucide-react';
 import { ActivityBar } from './components/ActivityBar';
 import { Sidebar } from './components/sidebar';
 import { Editor } from './components/Editor';
@@ -125,19 +126,19 @@ function App() {
                 onClick={() => handleTabClick(tab.id)}
               >
                 <span className="tab-icon">
-                  {tab.language === 'html' && '📄'}
-                  {tab.language === 'css' && '🎨'}
-                  {tab.language === 'javascript' && '⚡'}
-                  {tab.language === 'typescript' && '📘'}
-                  {!['html', 'css', 'javascript', 'typescript'].includes(tab.language) && '📄'}
+                  {tab.language === 'html' && <FileCode size={14} className="tab-file-icon" style={{ color: '#e44d26' }} />}
+                  {tab.language === 'css' && <FileCode size={14} className="tab-file-icon" style={{ color: '#264de4' }} />}
+                  {tab.language === 'javascript' && <FileCode size={14} className="tab-file-icon" style={{ color: '#f7df1e' }} />}
+                  {tab.language === 'typescript' && <FileCode size={14} className="tab-file-icon" style={{ color: '#3178c6' }} />}
+                  {!['html', 'css', 'javascript', 'typescript'].includes(tab.language) && <FileCode size={14} className="tab-file-icon" />}
                 </span>
                 <span className={tab.isDirty ? 'tab-dirty' : ''}>{tab.name}</span>
-                {tab.isDirty && <span className="tab-dirty-indicator">●</span>}
+                {tab.isDirty && <Circle size={8} className="tab-dirty-indicator" fill="currentColor" />}
                 <button 
                   className="tab-close"
                   onClick={(e) => handleTabClose(e, tab.id)}
                 >
-                  ×
+                  <X size={14} />
                 </button>
               </div>
             ))}

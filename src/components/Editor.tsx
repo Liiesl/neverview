@@ -1,6 +1,7 @@
 import { useRef, useEffect, useCallback } from 'react';
 import Editor from '@monaco-editor/react';
 import type * as monaco from 'monaco-editor';
+import { Sparkles, Copy } from 'lucide-react';
 import './Editor.css';
 
 interface EditorProps {
@@ -134,10 +135,10 @@ export function EditorComponent({ value, language, fileId, onChange }: EditorPro
         <span className="editor-header-text">{language.toUpperCase()}</span>
         <div className="editor-actions">
           <button className="editor-action-btn" title="Format Document">
-            ✨
+            <Sparkles size={14} />
           </button>
           <button className="editor-action-btn" title="Copy">
-            📋
+            <Copy size={14} />
           </button>
         </div>
       </div>
