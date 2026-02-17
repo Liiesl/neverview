@@ -216,10 +216,7 @@ export function FileTreeNode({
         data-node-id={node.id}
       >
         {node.type === 'folder' && (
-          <span className="tree-chevron" onClick={(e) => {
-            e.stopPropagation();
-            onToggleFolder(node.id);
-          }}>
+          <span className="tree-chevron">
             {node.isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
           </span>
         )}

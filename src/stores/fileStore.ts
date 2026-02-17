@@ -810,7 +810,17 @@ export const useFileStore = () => {
 
   const toggleFolder = useCallback((folderId: string) => {
     setRootFolder(prev => {
-      const newRoot = { ...prev };
+      const cloneNode = (node: VirtualNode): VirtualNode => {
+        const cloned: VirtualNode = { ...node };
+        if (node.children) {
+          cloned.children = new Map(
+            Array.from(node.children.entries()).map(([key, child]) => [key, cloneNode(child)])
+          );
+        }
+        return cloned;
+      };
+      
+      const newRoot = cloneNode(prev);
       
       const toggleNode = (node: VirtualNode): boolean => {
         if (node.id === folderId) {
