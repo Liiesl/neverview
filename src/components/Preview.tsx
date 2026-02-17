@@ -1,41 +1,58 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
+import { processHtmlForPreview } from '../utils/previewEngine';
+import type { VirtualNode } from '../stores/fileStore';
 import './Preview.css';
 
 interface PreviewProps {
   htmlContent: string;
+  htmlPath: string;
+  allFiles: Map<string, VirtualNode>;
 }
 
-export function Preview({ htmlContent }: PreviewProps) {
+export function Preview({ htmlContent, htmlPath, allFiles }: PreviewProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const processedHtmlRef = useRef<string>('');
+
+  const updatePreview = useCallback(() => {
+    if (!iframeRef.current) return;
+    
+    const iframe = iframeRef.current;
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    
+    if (!doc) return;
+
+    try {
+      // Process HTML with dependency resolution
+      const { html: processedHtml } = processHtmlForPreview(
+        htmlContent,
+        htmlPath,
+        allFiles
+      );
+      
+      processedHtmlRef.current = processedHtml;
+      
+      doc.open();
+      doc.write(processedHtml);
+      doc.close();
+    } catch (error) {
+      console.error('Error processing preview:', error);
+      // Fallback to raw HTML
+      doc.open();
+      doc.write(htmlContent);
+      doc.close();
+    }
+  }, [htmlContent, htmlPath, allFiles]);
 
   useEffect(() => {
-    if (iframeRef.current) {
-      const iframe = iframeRef.current;
-      const doc = iframe.contentDocument || iframe.contentWindow?.document;
-      
-      if (doc) {
-        doc.open();
-        doc.write(htmlContent);
-        doc.close();
-      }
-    }
-  }, [htmlContent]);
+    updatePreview();
+  }, [updatePreview]);
 
   const handleRefresh = () => {
-    if (iframeRef.current) {
-      const iframe = iframeRef.current;
-      const doc = iframe.contentDocument || iframe.contentWindow?.document;
-      
-      if (doc) {
-        doc.open();
-        doc.write(htmlContent);
-        doc.close();
-      }
-    }
+    updatePreview();
   };
 
   const handleOpenInNewTab = () => {
-    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const blob = new Blob([processedHtmlRef.current || htmlContent], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     window.open(url, '_blank');
   };

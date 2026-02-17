@@ -10,6 +10,7 @@ import './App.css';
 function App() {
   const {
     rootFolder,
+    allFiles,
     activeFile,
     activeFileId,
     tabs,
@@ -72,8 +73,9 @@ function App() {
     setIsDragging(false);
   }, []);
 
-  // Get preview content from active HTML file
+  // Get preview content and path from active HTML file
   const previewContent = getPreviewContent();
+  const previewPath = activeFile?.language === 'html' ? activeFile.path : '/NEVERVIEW/index.html';
 
   return (
     <div 
@@ -162,7 +164,7 @@ function App() {
               className="preview-panel"
               style={{ height: `${100 - splitRatio}%` }}
             >
-              <Preview htmlContent={previewContent} />
+              <Preview htmlContent={previewContent} htmlPath={previewPath} allFiles={allFiles} />
             </div>
           </div>
         </div>
