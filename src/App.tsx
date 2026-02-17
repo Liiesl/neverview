@@ -23,10 +23,12 @@ function App() {
     renameFile,
     toggleFolder,
     getPreviewContent,
+    moveFile,
   } = useFileStore();
 
   const [activeTab, setActiveTab] = useState<'files' | 'search' | 'git' | 'extensions'>('files');
   const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [sidebarWidth, setSidebarWidth] = useState(250);
   const [splitRatio, setSplitRatio] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -102,8 +104,16 @@ function App() {
             onCreateFile={createFile}
             onDeleteFile={deleteFile}
             onRenameFile={renameFile}
+            onMoveFile={moveFile}
+            sidebarWidth={sidebarWidth}
+            onResize={setSidebarWidth}
           />
         )}
+        <style>{`
+          .content-area {
+            --sidebar-width: ${sidebarWidth}px;
+          }
+        `}</style>
         
         <div className="main-content">
           {/* Tab Bar */}

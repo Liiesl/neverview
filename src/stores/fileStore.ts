@@ -857,6 +857,79 @@ export const useFileStore = () => {
     return htmlFiles['/NEVERVIEW/index.html'] || Object.values(htmlFiles)[0] || '';
   }, [activeFile, getAllHtmlContent]);
 
+  const moveFile = useCallback((fileId: string, targetFolderId: string) => {
+    const fileToMove = allFiles.get(fileId);
+    const targetFolder = allFiles.get(targetFolderId);
+    
+    if (!fileToMove || !targetFolder) return;
+    if (fileToMove.parentId === targetFolderId) return; // Already in target
+    if (targetFolder.type !== 'folder') return;
+
+    setRootFolder(prev => {
+      const newRoot = { ...prev };
+      let movedNode: VirtualNode | undefined;
+      
+      // Remove from current parent
+      const removeFromParent = (node: VirtualNode): boolean => {
+        if (node.children) {
+          if (node.children.has(fileId)) {
+            const nodeToMove = node.children.get(fileId);
+            if (nodeToMove) {
+              // Deep copy the node
+              movedNode = JSON.parse(JSON.stringify(nodeToMove)) as VirtualNode;
+              node.children.delete(fileId);
+            }
+            return true;
+          }
+          for (const [, child] of node.children) {
+            if (removeFromParent(child)) return true;
+          }
+        }
+        return false;
+      };
+      
+      removeFromParent(newRoot);
+      
+      if (movedNode) {
+        // Create updated node with new parent
+        const updatedNode: VirtualNode = {
+          id: movedNode.id,
+          name: movedNode.name,
+          type: movedNode.type,
+          path: `${targetFolder.path}/${movedNode.name}`,
+          content: movedNode.content,
+          language: movedNode.language,
+          isDirty: movedNode.isDirty,
+          isOpen: movedNode.isOpen,
+          isExpanded: movedNode.isExpanded,
+          children: movedNode.children,
+          parentId: targetFolderId
+        };
+        
+        // Add to new parent
+        const addToParent = (node: VirtualNode): boolean => {
+          if (node.id === targetFolderId) {
+            if (!node.children) {
+              node.children = new Map();
+            }
+            node.children.set(fileId, updatedNode);
+            return true;
+          }
+          if (node.children) {
+            for (const [, child] of node.children) {
+              if (addToParent(child)) return true;
+            }
+          }
+          return false;
+        };
+        
+        addToParent(newRoot);
+      }
+      
+      return newRoot;
+    });
+  }, [allFiles]);
+
   return {
     rootFolder,
     allFiles,
@@ -876,6 +949,7 @@ export const useFileStore = () => {
     toggleFolder,
     getAllHtmlContent,
     getPreviewContent,
+    moveFile,
   };
 };
 

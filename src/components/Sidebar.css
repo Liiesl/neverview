@@ -1,16 +1,18 @@
 .sidebar {
-  width: 250px;
   background-color: var(--vscode-sidebar-bg);
   border-right: 1px solid var(--vscode-border);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   flex-shrink: 0;
+  min-width: 150px;
+  max-width: 500px;
 }
 
 .sidebar-section {
   flex: 1;
   overflow: auto;
+  position: relative;
 }
 
 .sidebar-header {
@@ -46,9 +48,27 @@
   color: var(--vscode-text);
 }
 
+/* Resize Handle */
+.sidebar-resize-handle {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  cursor: ew-resize;
+  z-index: 100;
+  background: transparent;
+  transition: background-color 0.2s;
+}
+
+.sidebar-resize-handle:hover,
+.sidebar-resize-handle:active {
+  background-color: var(--vscode-accent);
+}
+
 /* File Tree Styles */
 .file-tree {
   padding: 0 0 8px 0;
+  outline: none;
 }
 
 .tree-node {
@@ -60,6 +80,9 @@
   font-size: 13px;
   color: var(--vscode-text);
   user-select: none;
+  position: relative;
+  border-radius: 0;
+  outline: none;
 }
 
 .tree-node:hover {
@@ -70,18 +93,67 @@
   background-color: var(--vscode-selection);
 }
 
+.tree-node.focused {
+  outline: 1px solid var(--vscode-accent);
+  outline-offset: -1px;
+}
+
+.tree-node:focus {
+  outline: 1px solid var(--vscode-accent);
+  outline-offset: -1px;
+}
+
 .tree-node.creating {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+.tree-node.dragging {
+  opacity: 0.5;
+}
+
+/* Drop indicators */
+.tree-node.drop-before,
+.tree-node.drop-after,
+.tree-node.drop-inside {
+  position: relative;
+}
+
+.drop-indicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--vscode-accent);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.drop-indicator-before {
+  top: -1px;
+}
+
+.drop-indicator-after {
+  bottom: -1px;
+}
+
+.drop-indicator-inside {
+  top: 25%;
+  bottom: 25%;
+  height: auto;
+  background-color: rgba(59, 130, 246, 0.2);
+  border: 1px solid var(--vscode-accent);
 }
 
 .tree-chevron {
   display: flex;
   align-items: center;
   color: var(--vscode-text-muted);
+  flex-shrink: 0;
 }
 
 .tree-folder-icon {
   color: #dcb67a;
+  flex-shrink: 0;
 }
 
 .tree-label {
@@ -109,17 +181,102 @@
 }
 
 .file-icon.js,
-.file-icon.jsx {
+.file-icon.jsx,
+.file-icon.cjs,
+.file-icon.mjs {
   color: #f7df1e;
 }
 
 .file-icon.ts,
-.file-icon.tsx {
+.file-icon.tsx,
+.file-icon.mts {
   color: #3178c6;
 }
 
 .file-icon.json {
-  color: #ccc;
+  color: #f7df1e;
+}
+
+.file-icon.scss,
+.file-icon.sass {
+  color: #cc6699;
+}
+
+.file-icon.less {
+  color: #1d365d;
+}
+
+.file-icon.yaml,
+.file-icon.yml {
+  color: #cb171e;
+}
+
+.file-icon.toml {
+  color: #9c4121;
+}
+
+.file-icon.vue {
+  color: #4fc08d;
+}
+
+.file-icon.py,
+.file-icon.pyc,
+.file-icon.pyd {
+  color: #3776ab;
+}
+
+.file-icon.rs {
+  color: #dea584;
+}
+
+.file-icon.go {
+  color: #00add8;
+}
+
+.file-icon.png,
+.file-icon.jpg,
+.file-icon.jpeg,
+.file-icon.gif,
+.file-icon.svg,
+.file-icon.webp,
+.file-icon.ico {
+  color: #b7b73b;
+}
+
+.file-icon.mp3,
+.file-icon.wav,
+.file-icon.ogg,
+.file-icon.flac {
+  color: #a855f7;
+}
+
+.file-icon.mp4,
+.file-icon.avi,
+.file-icon.mov,
+.file-icon.webm {
+  color: #f43f5e;
+}
+
+.file-icon.zip,
+.file-icon.tar,
+.file-icon.gz,
+.file-icon.rar {
+  color: #f59e0b;
+}
+
+.file-icon.env {
+  color: #faf743;
+}
+
+.file-icon.gitignore,
+.file-icon.gitattributes {
+  color: #f14e32;
+}
+
+.file-icon.txt,
+.file-icon.md,
+.file-icon.markdown {
+  color: #6b7280;
 }
 
 /* Rename Input */
@@ -133,18 +290,10 @@
   font-size: 13px;
   outline: none;
   border-radius: 2px;
+  margin-left: 4px;
 }
 
 /* Context Menu */
-.context-menu-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 999;
-}
-
 .context-menu {
   background-color: var(--vscode-dropdown-bg);
   border: 1px solid var(--vscode-border);
@@ -153,6 +302,18 @@
   min-width: 160px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   z-index: 1000;
+  animation: contextMenuFade 0.1s ease-out;
+}
+
+@keyframes contextMenuFade {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .context-menu button {
@@ -167,6 +328,7 @@
   font-size: 13px;
   cursor: pointer;
   text-align: left;
+  transition: background-color 0.1s;
 }
 
 .context-menu button:hover {
@@ -185,56 +347,6 @@
   height: 1px;
   background-color: var(--vscode-border);
   margin: 4px 0;
-}
-
-/* Old styles for backward compatibility - remove when fully migrated */
-.folder-item,
-.file-item {
-  user-select: none;
-}
-
-.folder-header {
-  display: flex;
-  align-items: center;
-  padding: 4px 12px 4px 8px;
-  cursor: pointer;
-  gap: 4px;
-  font-size: 13px;
-  color: var(--vscode-text);
-}
-
-.folder-header:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-.folder-icon {
-  color: #dcb67a;
-}
-
-.folder-children {
-  padding-left: 8px;
-}
-
-.file-item {
-  display: flex;
-  align-items: center;
-  padding: 4px 12px 4px 8px;
-  cursor: pointer;
-  gap: 4px;
-  font-size: 13px;
-  color: var(--vscode-text);
-}
-
-.file-item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-.file-item.active {
-  background-color: var(--vscode-selection);
-}
-
-.file-indent {
-  width: 16px;
 }
 
 /* Outline Styles */
@@ -335,4 +447,54 @@
 .extension-desc {
   font-size: 11px;
   color: var(--vscode-text-muted);
+}
+
+/* Backward compatibility */
+.folder-item,
+.file-item {
+  user-select: none;
+}
+
+.folder-header {
+  display: flex;
+  align-items: center;
+  padding: 4px 12px 4px 8px;
+  cursor: pointer;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--vscode-text);
+}
+
+.folder-header:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.folder-icon {
+  color: #dcb67a;
+}
+
+.folder-children {
+  padding-left: 8px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  padding: 4px 12px 4px 8px;
+  cursor: pointer;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--vscode-text);
+}
+
+.file-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.file-item.active {
+  background-color: var(--vscode-selection);
+}
+
+.file-indent {
+  width: 16px;
 }
